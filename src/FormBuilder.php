@@ -510,12 +510,12 @@ class FormBuilder
             return old(preg_replace("/\[\]/", "", $name), $value);
         }
         
+        $fromFill = $formData[$name] ?? null;
+        
         //If select multible and filled by a model with "with" and we have "id" in attribute we convert it to an array of id
         if($render === "select" && isset($multiple) && $multiple === true && is_array($fromFill) && !empty($fromFill) && array_key_exists("id", $fromFill[0])) {
             $fromFill = Arr::pluck($fromFill, 'id');
         }
-
-        $fromFill = $formData[$name] ?? null;
 
         return $value ?? $fromFill;
     }
