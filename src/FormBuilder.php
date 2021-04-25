@@ -491,7 +491,7 @@ class FormBuilder
             return $id;
         }
 
-        return ($formIdPrefix ?? 'inp-') . $name . ($render === 'radio' ? '-' . $value : '');
+        return ($formIdPrefix ?? 'inp-') . str_replace('.', '-', $name) . ($render === 'radio' ? '-' . $value : '');
     }
 
     private function hasOldInput()
