@@ -246,6 +246,14 @@ class FormBuilder
         if (!$disableValidation && $this->errors()->count() > 0) {
             $class .= $this->errors()->has($name) ? ' is-invalid' : ' is-valid';
         }
+        
+        //Laravel dot notation to normal form name
+        //Exemple if you set a name with: test.hello.world
+        //Name will be change to test[hello][world]
+        if(strpos($name, '.') !== false) {
+            $parts = explode('.', $name);
+            $name = $parts[0].implode('', array_map(function($n) {return "[$n]";}, array_slice($parts, 1)));
+        }
 
         $attributes = [
             'type' => $type,
