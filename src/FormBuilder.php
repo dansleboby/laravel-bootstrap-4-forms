@@ -246,20 +246,30 @@ class FormBuilder
         if (!$disableValidation && $this->errors()->count() > 0) {
             $class .= $this->errors()->has($name) ? ' is-invalid' : ' is-valid';
         }
-        
-        //Laravel dot notation to normal form name
-        //Exemple if you set a name with: test.hello.world
-        //Name will be change to test[hello][world]
-        if(strpos($name, '.') !== false) {
-            $parts = explode('.', $name);
-            $name = $parts[0].implode('', array_map(function($n) {return "[$n]";}, array_slice($parts, 1)));
-        }
 
         $attributes = [
             'type' => $type,
             'name' => $name,
             'id' => $id
         ];
+
+        if ($this->isRadioOrCheckbox()) {
+            //dd($name, old($name), $formData, $value, old(), request()->all());
+            if ($this->hasOldInput()) {
+                $isChecked = old($name) === $value;
+            } else {
+                $isChecked = isset($formData[$name]) ? $formData[$name] === $value : $checked;
+            }
+            $attributes['checked'] = $isChecked;
+        }
+
+        //Laravel dot notation to normal form name
+        //Exemple if you set a name with: test.hello.world
+        //Name will be change to test[hello][world]
+        if(strpos($name, '.') !== false) {
+            $parts = explode('.', $name);
+            $attributes['name'] = $parts[0].implode('', array_map(function($n) {return "[$n]";}, array_slice($parts, 1)));
+        }
 
         if ($render !== 'select') {
             $attributes['value'] = $this->getValue();
@@ -273,15 +283,6 @@ class FormBuilder
         // If the field is a hidden field, we don't need add more attributes
         if ($type === 'hidden') {
             return $attributes;
-        }
-
-        if ($this->isRadioOrCheckbox()) {
-            if ($this->hasOldInput()) {
-                $isChecked = old($name) === $value;
-            } else {
-                $isChecked = isset($formData[$name]) ? $formData[$name] === $value : $checked;
-            }
-            $attributes['checked'] = $isChecked;
         }
 
         return array_merge($attributes, [
@@ -517,13 +518,13 @@ class FormBuilder
         if ($this->hasOldInput()) {
             return old(preg_replace("/\[\]/", "", $name), $value);
         }
-        
+
         if(strpos($name, '.') === false) {
             $fromFill = $formData[$name] ?? null;
         } else {
             $fromFill = \Arr::get($formData, $name);
         }
-        
+
         //If select multible and filled by a model with "with" and we have "id" in attribute we convert it to an array of id
         if($render === "select" && isset($multiple) && $multiple === true && is_array($fromFill) && !empty($fromFill) && array_key_exists("id", $fromFill[0])) {
             $fromFill = \Arr::pluck($fromFill, 'id');
