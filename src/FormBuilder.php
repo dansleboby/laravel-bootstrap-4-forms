@@ -255,8 +255,11 @@ class FormBuilder
 
         if ($this->isRadioOrCheckbox()) {
             //dd($name, old($name), $formData, $value, old(), request()->all());
+
             if ($this->hasOldInput()) {
                 $isChecked = old($name) === $value;
+            } elseif(strpos($name, '.') !== false) {
+                $isChecked = \Arr::get($formData, $name) === $value ? true : $checked;
             } else {
                 $isChecked = isset($formData[$name]) ? $formData[$name] === $value : $checked;
             }
