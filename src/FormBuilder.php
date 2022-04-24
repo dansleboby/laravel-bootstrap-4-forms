@@ -254,18 +254,18 @@ class FormBuilder
             'id' => $id
         ];
 
-        if ($this->isRadioOrCheckbox()) {
-            //dd($name, old($name), $formData, $value, old(), request()->all());
+		if ($this->isRadioOrCheckbox()) {
+			//dd($name, old($name), $formData, $value, old(), request()->all());
 
-            if ($this->hasOldInput()) {
-                $isChecked = old($name) === $value;
-            } elseif(strpos($name, '.') !== false) {
-                $isChecked = \Arr::get($formData, $name) === $value ? true : $checked;
-            } else {
-                $isChecked = isset($formData[$name]) ? $formData[$name] === $value : $checked;
-            }
-            $attributes['checked'] = $isChecked;
-        }
+			if ($this->hasOldInput()) {
+				$isChecked = old($name) == $value;
+			} elseif(strpos($name, '.') !== false) {
+				$isChecked = \Arr::get($formData, $name) == $value ? true : $checked;
+			} else {
+				$isChecked = isset($formData[$name]) ? $formData[$name] == $value : $checked;
+			}
+			$attributes['checked'] = $isChecked;
+		}
 
         //Laravel dot notation to normal form name
         //Exemple if you set a name with: test.hello.world
