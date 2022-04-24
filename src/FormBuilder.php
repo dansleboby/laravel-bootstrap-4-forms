@@ -2,6 +2,7 @@
 
 namespace NetoJose\Bootstrap4Forms;
 
+use Carbon\Carbon;
 use Illuminate\Support\ViewErrorBag;
 
 class FormBuilder
@@ -511,6 +512,15 @@ class FormBuilder
         return count((array) old()) != 0;
     }
 
+
+	private function validateDate($date)
+	{
+		//This check the ISO8601 format witch is the default format output of carbon to array
+		//SRC: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
+		//TODO: handle date serialization: https://laravel.com/docs/9.x/eloquent-serialization#date-serialization
+		return preg_match('/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/', $date);
+	}
+
     private function getValue()
     {
         extract($this->get('name', 'render', 'multiple', 'value', 'formData'));
@@ -519,6 +529,7 @@ class FormBuilder
         }
 
         if ($this->hasOldInput()) {
+			if($this->grt)
             return old(preg_replace("/\[\]/", "", $name), $value);
         }
 
@@ -527,6 +538,23 @@ class FormBuilder
         } else {
             $fromFill = \Arr::get($formData, $name);
         }
+
+		//Special format
+		if($this->validateDate($fromFill, 'c')) {
+			$d = Carbon::createFromTimeString($fromFill);
+			if($type === 'date') {
+				$fromFill = $d->format('Y-m-d');
+			}
+			if($type === 'datetime-local') {
+				$fromFill = $d->format('c');
+			}
+			if($type === 'month') {
+				$fromFill = $d->format('Y-m');
+			}
+			if($type === 'week') {
+				$fromFill = $d->format('Y-\WW');
+			}
+		}
 
         //If select multible and filled by a model with "with" and we have "id" in attribute we convert it to an array of id
         if($render === "select" && isset($multiple) && $multiple === true && is_array($fromFill) && !empty($fromFill) && array_key_exists("id", $fromFill[0])) {
