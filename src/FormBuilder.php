@@ -529,7 +529,6 @@ class FormBuilder
         }
 
         if ($this->hasOldInput()) {
-			if($this->grt)
             return old(preg_replace("/\[\]/", "", $name), $value);
         }
 
