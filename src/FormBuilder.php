@@ -523,7 +523,7 @@ class FormBuilder
 
     private function getValue()
     {
-        extract($this->get('name', 'render', 'multiple', 'value', 'formData'));
+        extract($this->get('name', 'render', 'multiple', 'value', 'formData', 'type'));
         if ($this->isRadioOrCheckbox()) {
             return $value;
         }
