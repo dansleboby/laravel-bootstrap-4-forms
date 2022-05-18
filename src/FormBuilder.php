@@ -539,7 +539,7 @@ class FormBuilder
         }
 
 		//Special format
-		if($this->validateDate($fromFill, 'c')) {
+		if(in_array($type, ['date', 'datetime-local', 'month', 'week']) && $this->validateDate($fromFill)) {
 			$d = Carbon::createFromTimeString($fromFill);
 			if($type === 'date') {
 				$fromFill = $d->format('Y-m-d');
