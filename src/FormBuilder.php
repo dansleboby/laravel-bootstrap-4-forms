@@ -556,11 +556,11 @@ class FormBuilder
 		}
 
         //If select multible and filled by a model with "with" and we have "id" in attribute we convert it to an array of id
-        if($render === "select" && isset($multiple) && $multiple === true && is_array($fromFill) && !empty($fromFill) && array_key_exists("id", $fromFill[0])) {
+        if($render === "select" && isset($multiple) && $multiple === true && is_array($fromFill) && !empty($fromFill) && is_array($fromFill[0]) && array_key_exists("id", $fromFill[0])) {
             $fromFill = \Arr::pluck($fromFill, 'id');
         }
 
-        return $value ?? $fromFill;
+        return $fromFill ?? $value;
     }
 
     private function buildHtmlAttrs(array $attributes, $appendAttrs = true): string
