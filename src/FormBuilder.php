@@ -545,7 +545,7 @@ class FormBuilder
 				$fromFill = $d->format('Y-m-d');
 			}
 			if($type === 'datetime-local') {
-				$fromFill = $d->format('c');
+				$fromFill = $d->format('Y-m-d\TH:i');
 			}
 			if($type === 'month') {
 				$fromFill = $d->format('Y-m');
